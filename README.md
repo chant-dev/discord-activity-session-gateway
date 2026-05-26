@@ -1,8 +1,8 @@
 # Discord Activity Session Gateway
 
-Reusable Discord Activity identity, OAuth, Socket.IO session, and presence primitives extracted from `button-battle` with a copy-first strategy.
+Reusable Discord Activity identity, OAuth, Socket.IO session, and presence gateway primitives.
 
-This package keeps the game-specific rules out of the gateway. It gives Activity apps:
+This package keeps app-specific rules out of the gateway. It gives Discord Activity apps:
 
 - Browser identity resolution through the Discord Embedded App SDK, OAuth code exchange, SDK user fallback, and local browser fallback.
 - Browser layout-mode subscription for focused, picture-in-picture, and grid modes.
@@ -10,27 +10,25 @@ This package keeps the game-specific rules out of the gateway. It gives Activity
 - Server token exchange helpers for `/api/discord/token`.
 - Server session membership and presence helpers for join, leave, disconnect, host assignment, reconnect, room broadcasts, and idle cleanup.
 
-## Button Battle Source Map
-
-The extraction came from these current Button Battle paths:
-
-- `apps/web/src/discord.ts`: Discord SDK init, `ready()`, `authorize`, backend token exchange, `authenticate`, avatar URL building, SDK user fallback, local identity fallback, and layout-mode subscription.
-- `apps/web/src/localIdentity.ts`: `sessionStorage` identity persistence, `?name=`, `?session=`, and random local player generation.
-- `apps/web/src/App.tsx`: Socket.IO connect handler, `join_session`, snapshot sync events, error handling, and leave/disconnect cleanup.
-- `apps/server/src/index.ts`: `/api/discord/token`, Socket.IO room join/leave/disconnect handlers, socket-per-player tracking, broadcast shape, `request_state`, and idle session cleanup.
-- `apps/server/src/game.ts`: membership semantics used by the gateway examples: first connected player becomes host, reconnect marks the player connected again, disconnect removes idle lobby/results players, active rounds preserve disconnected players, and host is reassigned.
-
 ## Install
 
 ```sh
 npm install @discord-activities/session-gateway
 ```
 
-For local sibling development from Button Battle:
+For local package development:
 
 ```sh
 npm install ../discord-activity-session-gateway
 ```
+
+## Environment
+
+Copy `.env.example` into the app that hosts your Activity and fill in the Discord application values:
+
+- `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, and `DISCORD_REDIRECT_URI` are read by the server token exchange helper.
+- `VITE_DISCORD_CLIENT_ID`, `VITE_API_BASE_URL`, and `VITE_WS_URL` are read by Vite browser clients.
+- `VITE_LOCAL_API_BASE_URL` and `VITE_LOCAL_WS_URL` let local browser mode talk to a local gateway.
 
 ## Browser Usage
 
@@ -99,4 +97,4 @@ app.get("/health", (_request, response) => {
 
 For an authoritative game, pass `createSession` with a `SessionAdapter` around your game state instead of using the default `PresenceSession`.
 
-See `examples/button-battle-web.tsx` and `examples/button-battle-server.ts` for Button Battle-shaped integration.
+See `examples/activity-web.tsx` and `examples/activity-server.ts` for a Vite browser hook and an Express plus Socket.IO server.

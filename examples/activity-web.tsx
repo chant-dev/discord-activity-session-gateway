@@ -7,15 +7,30 @@ import {
   type ActivityIdentity,
   type ActivityLayoutMode
 } from "@discord-activities/session-gateway/browser";
-import type { SessionSnapshot } from "../apps/web/src/types";
+
+interface PresencePlayer {
+  id: string;
+  displayName: string;
+  avatarUrl?: string;
+  connected: boolean;
+  isHost: boolean;
+}
+
+interface PresenceSnapshot {
+  sessionId: string;
+  hostId?: string;
+  players: PresencePlayer[];
+  connectedPlayerCount: number;
+  serverNow: number;
+}
 
 const LOCAL_API_BASE_URL = import.meta.env.VITE_LOCAL_API_BASE_URL || "http://localhost:3001";
 const REMOTE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || LOCAL_API_BASE_URL;
 const REMOTE_WS_URL = import.meta.env.VITE_WS_URL || REMOTE_API_BASE_URL;
 
-export function useButtonBattleActivitySession() {
+export function useActivityPresenceSession() {
   const [identity, setIdentity] = useState<ActivityIdentity>();
-  const [snapshot, setSnapshot] = useState<SessionSnapshot>();
+  const [snapshot, setSnapshot] = useState<PresenceSnapshot>();
   const [status, setStatus] = useState("Initializing activity...");
   const [error, setError] = useState<string>();
   const [layoutMode, setLayoutMode] = useState<ActivityLayoutMode>("focused");
@@ -27,9 +42,9 @@ export function useButtonBattleActivitySession() {
     resolveActivityIdentity({
       clientId,
       apiBaseUrl: REMOTE_API_BASE_URL,
-      oauthState: "button-battle",
+      oauthState: "activity-presence",
       localFallbackNote: "Local browser mode. Set VITE_DISCORD_CLIENT_ID to initialize Discord Activity context.",
-      localStorageKey: "button-battle-local-identity"
+      localStorageKey: "activity-presence-local-identity"
     }).then((resolvedIdentity) => {
       if (!cancelled) {
         setIdentity(resolvedIdentity);
@@ -65,7 +80,7 @@ export function useButtonBattleActivitySession() {
       return undefined;
     }
 
-    const session = createActivitySessionClient<SessionSnapshot>({
+    const session = createActivitySessionClient<PresenceSnapshot>({
       socketUrl: wsUrl,
       identity,
       onStatus: setStatus,

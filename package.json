@@ -1,7 +1,7 @@
 {
   "name": "@discord-activities/session-gateway",
   "version": "0.1.0",
-  "description": "Reusable Discord Activity identity, OAuth, Socket.IO session, and presence gateway primitives extracted from Button Battle.",
+  "description": "Reusable Discord Activity identity, OAuth, Socket.IO session, and presence gateway primitives.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,7 +22,7 @@
   "files": [
     "dist",
     "README.md",
-    "MIGRATION.md",
+    ".env.example",
     "examples"
   ],
   "scripts": {
